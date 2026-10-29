@@ -1,0 +1,187 @@
+[
+ {
+  "id": "swertres",
+  "name": "Swertres (3D Lotto)",
+  "slug": "swertres",
+  "draws": [
+   "14:00",
+   "17:00",
+   "21:00"
+  ],
+  "picks": 3,
+  "range": "0-9",
+  "aliases": [
+   "3d lotto",
+   "suertres"
+  ],
+  "pcso_names": [
+   "3D Lotto 2PM",
+   "3D Lotto 5PM",
+   "3D Lotto 9PM"
+  ]
+ },
+ {
+  "id": "ez2",
+  "name": "EZ2 (2D Lotto)",
+  "slug": "ez2",
+  "draws": [
+   "14:00",
+   "17:00",
+   "21:00"
+  ],
+  "picks": 2,
+  "range": "1-31",
+  "aliases": [
+   "2d lotto"
+  ],
+  "pcso_names": [
+   "2D Lotto 2PM",
+   "2D Lotto 5PM",
+   "2D Lotto 9PM"
+  ]
+ },
+ {
+  "id": "6-58",
+  "name": "Ultra Lotto 6/58",
+  "slug": "6-58",
+  "draws": [
+   "21:00"
+  ],
+  "days": [
+   "Tue",
+   "Fri",
+   "Sun"
+  ],
+  "picks": 6,
+  "range": "1-58",
+  "aliases": [],
+  "pcso_names": [
+   "Ultra Lotto 6/58"
+  ],
+  "min_jackpot": 75000000
+ },
+ {
+  "id": "6-55",
+  "name": "Grand Lotto 6/55",
+  "slug": "6-55",
+  "draws": [
+   "21:00"
+  ],
+  "days": [
+   "Mon",
+   "Wed",
+   "Sat"
+  ],
+  "picks": 6,
+  "range": "1-55",
+  "aliases": [],
+  "pcso_names": [
+   "Grand Lotto 6/55"
+  ],
+  "min_jackpot": 45000000
+ },
+ {
+  "id": "6-49",
+  "name": "Super Lotto 6/49",
+  "slug": "6-49",
+  "draws": [
+   "21:00"
+  ],
+  "days": [
+   "Tue",
+   "Thu",
+   "Sun"
+  ],
+  "picks": 6,
+  "range": "1-49",
+  "aliases": [],
+  "pcso_names": [
+   "Super Lotto 6/49",
+   "Superlotto 6/49"
+  ],
+  "min_jackpot": 25000000
+ },
+ {
+  "id": "6-45",
+  "name": "Mega Lotto 6/45",
+  "slug": "6-45",
+  "draws": [
+   "21:00"
+  ],
+  "days": [
+   "Mon",
+   "Wed",
+   "Fri"
+  ],
+  "picks": 6,
+  "range": "1-45",
+  "aliases": [],
+  "pcso_names": [
+   "Mega Lotto 6/45",
+   "Megalotto 6/45"
+  ],
+  "min_jackpot": 15000000
+ },
+ {
+  "id": "6-42",
+  "name": "Lotto 6/42",
+  "slug": "6-42",
+  "draws": [
+   "21:00"
+  ],
+  "days": [
+   "Tue",
+   "Thu",
+   "Sat"
+  ],
+  "picks": 6,
+  "range": "1-42",
+  "aliases": [],
+  "pcso_names": [
+   "Lotto 6/42"
+  ],
+  "min_jackpot": 10000000
+ },
+ {
+  "id": "6d",
+  "name": "6D Lotto",
+  "slug": "6d",
+  "draws": [
+   "21:00"
+  ],
+  "days": [
+   "Tue",
+   "Thu",
+   "Sat"
+  ],
+  "picks": 6,
+  "range": "0-9",
+  "aliases": [
+   "6 digit"
+  ],
+  "pcso_names": [
+   "6D Lotto"
+  ]
+ },
+ {
+  "id": "4d",
+  "name": "4D Lotto",
+  "slug": "4d",
+  "draws": [
+   "21:00"
+  ],
+  "days": [
+   "Mon",
+   "Wed",
+   "Fri"
+  ],
+  "picks": 4,
+  "range": "0-9",
+  "aliases": [
+   "4 digit"
+  ],
+  "pcso_names": [
+   "4D Lotto"
+  ]
+ }
+]

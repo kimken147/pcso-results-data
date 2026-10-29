@@ -1,0 +1,51 @@
+name: Early 2PM/5PM results (recap OCR)
+# The "Labas ng Lotto" recap video appears ~10 min after each draw; its public thumbnails are read with
+# Anthropic vision. Starts before the draw and polls so GitHub's late cron start does not matter.
+on:
+  schedule:
+    - cron: '55 5 * * *'   # 13:55 PHT → polls for the 2PM video up to 14:50
+    - cron: '55 8 * * *'   # 16:55 PHT → 5PM
+  workflow_dispatch:
+    inputs:
+      slot: { description: 'auto | 2pm | 5pm', default: 'auto' }
+      wait_minutes: { description: 'Keep polling this long for the recap video', default: '0' }
+permissions: { contents: write }
+concurrency: { group: refresh-lotto-recap, cancel-in-progress: false }
+jobs:
+  recap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - name: Install OCR deps
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq tesseract-ocr >/dev/null
+          pip install --quiet pillow pytesseract anthropic
+      - name: Read recap thumbnails, polling until the slot is written
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          RECAP_MODEL: ${{ vars.RECAP_MODEL || 'claude-opus-5-5' }}
+          ANTHROPIC_WORKSPACE_ID: ${{ vars.ANTHROPIC_WORKSPACE_ID }}
+          RECAP_FEED_PROXY: ${{ secrets.RECAP_FEED_PROXY }}
+          DEPLOY_HOOK: ${{ secrets.DEPLOY_HOOK }}
+          SLOT: ${{ github.event.inputs.slot || 'auto' }}
+          WAIT: ${{ github.event.inputs.wait_minutes || '55' }}
+        run: |
+          git config user.name 'lotto-bot'
+          git config user.email 'lotto-bot@users.noreply.github.com'
+          want="$SLOT"; [ "$want" = auto ] && want=$([ "$(TZ=Asia/Manila date +%H)" -ge 17 ] && echo 5pm || echo 2pm)
+          deadline=$(( $(date +%s) + WAIT*60 ))
+          while :; do
+            python pipeline/recap.py update --slot "$want" || true
+            if ! git diff --quiet -- data; then
+              git add data
+              git commit -m "data: early 2D/3D results $(date -u +%Y-%m-%dT%H:%MZ)"
+              git pull --rebase origin main && git push origin HEAD:main
+              [ -n "$DEPLOY_HOOK" ] && curl -fsS "$DEPLOY_HOOK" >/dev/null && echo "deploy hook called" || echo "no deploy hook"
+            fi
+            python pipeline/wait_for.py "$want" && break
+            [ $(date +%s) -ge $deadline ] && { echo "deadline reached without the $want video"; break; }
+            sleep 180
+          done
