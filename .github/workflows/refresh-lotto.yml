@@ -1,0 +1,45 @@
+name: Refresh PCSO lotto results
+# PCSO publishes the whole day in one batch around 21:45 PHT (13:45 UTC) but GitHub's cron can start
+# 10–30 min late, so the evening run starts early and polls until every game drawn today has its 9PM
+# row. Two single-shot sweeps catch late corrections. Public repo: runner minutes are free.
+on:
+  schedule:
+    - cron: '20 13 * * *'   # 21:20 PHT, polls up to 100 min
+    - cron: '0 16 * * *'    # 00:00 PHT sweep
+    - cron: '0 1 * * *'     # 09:00 PHT sweep
+  workflow_dispatch:
+    inputs:
+      days: { description: 'Days to re-fetch', default: '7' }
+      wait_minutes: { description: 'Keep polling this long for today''s 9PM rows (0 = single shot)', default: '0' }
+permissions: { contents: write }
+concurrency: { group: refresh-lotto, cancel-in-progress: false }
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - name: Fetch, reconcile, commit — polling until today's 9PM rows exist
+        env:
+          DAYS: ${{ github.event.inputs.days || '7' }}
+          WAIT: ${{ github.event.inputs.wait_minutes || (github.event.schedule == '20 13 * * *' && '100' || '0') }}
+          DEPLOY_HOOK: ${{ secrets.DEPLOY_HOOK }}
+        run: |
+          git config user.name 'lotto-bot'
+          git config user.email 'lotto-bot@users.noreply.github.com'
+          deadline=$(( $(date +%s) + WAIT*60 ))
+          while :; do
+            python pipeline/pcso.py update --days "$DAYS" || true
+            python pipeline/recap.py reconcile || true
+            if ! git diff --quiet -- data; then
+              git add data
+              git commit -m "data: PCSO results $(date -u +%Y-%m-%dT%H:%MZ)"
+              git pull --rebase origin main && git push origin HEAD:main
+              [ -n "$DEPLOY_HOOK" ] && curl -fsS "$DEPLOY_HOOK" >/dev/null && echo "deploy hook called" || echo "no deploy hook"
+            fi
+            python pipeline/wait_for.py official && break
+            [ $(date +%s) -ge $deadline ] && { echo "deadline reached"; break; }
+            sleep 180
+          done
