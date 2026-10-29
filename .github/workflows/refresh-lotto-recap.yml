@@ -9,6 +9,7 @@ on:
     inputs:
       slot: { description: 'auto | 2pm | 5pm', default: 'auto' }
       wait_minutes: { description: 'Keep polling this long for the recap video', default: '0' }
+      debug_last: { description: 'Debug only: OCR the last N recap videos and exit (0 = normal run)', default: '0' }
 permissions: { contents: write }
 concurrency: { group: refresh-lotto-recap, cancel-in-progress: false }
 jobs:
@@ -32,7 +33,9 @@ jobs:
           DEPLOY_HOOK: ${{ secrets.DEPLOY_HOOK }}
           SLOT: ${{ github.event.inputs.slot || 'auto' }}
           WAIT: ${{ github.event.inputs.wait_minutes || '55' }}
+          DEBUG_LAST: ${{ github.event.inputs.debug_last || '0' }}
         run: |
+          if [ "$DEBUG_LAST" != "0" ]; then python pipeline/recap.py ocr --last "$DEBUG_LAST"; exit 0; fi
           git config user.name 'lotto-bot'
           git config user.email 'lotto-bot@users.noreply.github.com'
           want="$SLOT"; [ "$want" = auto ] && want=$([ "$(TZ=Asia/Manila date +%H)" -ge 17 ] && echo 5pm || echo 2pm)
