@@ -32,7 +32,7 @@ jobs:
       - name: Fetch, reconcile, commit — polling until today's 9PM rows exist
         env:
           DAYS: ${{ github.event.inputs.days || '7' }}
-          WAIT: ${{ github.event.inputs.wait_minutes || ((contains(github.event.schedule, ' 13 ') || contains(github.event.schedule, ' 14 ') || contains(github.event.schedule, ' 15 ')) && '60' || '0') }}
+          WAIT: ${{ github.event.inputs.wait_minutes || ((contains(github.event.schedule, ' 13 ') || contains(github.event.schedule, ' 14 ') || contains(github.event.schedule, ' 15 ') || contains(github.event.schedule, ' 18 ')) && '60' || '0') }}   # PCSO posted 2026-10-30's draws at 02:40 PHT and 10-31's after 02:30, so the 02:30 sweep polls too
           DEPLOY_HOOK: ${{ secrets.DEPLOY_HOOK }}
         run: |
           git config user.name 'lotto-bot'
