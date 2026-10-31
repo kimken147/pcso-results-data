@@ -64,6 +64,7 @@ class Video:
     published: datetime
     slot: str      # 2pm / 5pm / 9pm
     date: str      # YYYY-MM-DD from the title
+    from_feed: bool = True
 
 
 def get(url: str, timeout: int = 30) -> bytes:
@@ -145,7 +146,7 @@ def parse_channel_page(html: str) -> list[Video]:
         parsed = parse_title(title)
         if vid and parsed and vid not in seen:
             seen.add(vid)
-            out.append(Video(vid, title, datetime.now(timezone.utc), *parsed))
+            out.append(Video(vid, title, datetime.now(timezone.utc), *parsed, from_feed=False))
     return out
 
 
@@ -172,6 +173,14 @@ def fetch_videos() -> list[Video]:
 def pick(videos: list[Video], date: str, slot: str) -> Optional[Video]:
     for v in videos:
         if v.date == date and v.slot == slot:
+            return v
+    # The channel sometimes mistypes the date in the title (2026-10-31's 5pm video was titled "October 22 2026").
+    # Fall back to a same-slot video *published* on that PHT date; read_frame() still rejects the card unless the
+    # heading on the thumbnail says the expected date, so a wrong pick cannot write numbers. Feed entries only:
+    # channel-page entries carry `published = now`, which would match anything.
+    for v in videos:
+        if v.slot == slot and v.from_feed and v.published.astimezone(PHT).strftime("%Y-%m-%d") == date:
+            print(f"{date} {slot}: using video {v.id} titled '{v.title}' (title date {v.date} != {date}; published that day)", file=sys.stderr)
             return v
     return None
 
