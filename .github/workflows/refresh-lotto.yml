@@ -4,8 +4,16 @@ name: Refresh PCSO lotto results
 # row. Two single-shot sweeps catch late corrections. Public repo: runner minutes are free.
 on:
   schedule:
+    # GitHub skips scheduled runs on quiet repos (2026-10-31: the 21:20 run never fired), so several entries cover
+    # the evening; each one exits at once when the day's 9PM rows are already in, and the concurrency group keeps
+    # them from overlapping.
     - cron: '20 13 * * *'   # 21:20 PHT, polls up to 100 min
-    - cron: '0 16 * * *'    # 00:00 PHT sweep
+    - cron: '50 13 * * *'   # 21:50 PHT
+    - cron: '20 14 * * *'   # 22:20 PHT
+    - cron: '50 14 * * *'   # 22:50 PHT
+    - cron: '30 15 * * *'   # 23:30 PHT
+    - cron: '30 16 * * *'   # 00:30 PHT sweep
+    - cron: '30 18 * * *'   # 02:30 PHT sweep (PCSO published 02:40 on 2026-10-31)
     - cron: '0 1 * * *'     # 09:00 PHT sweep
   workflow_dispatch:
     inputs:
@@ -24,7 +32,7 @@ jobs:
       - name: Fetch, reconcile, commit — polling until today's 9PM rows exist
         env:
           DAYS: ${{ github.event.inputs.days || '7' }}
-          WAIT: ${{ github.event.inputs.wait_minutes || (github.event.schedule == '20 13 * * *' && '100' || '0') }}
+          WAIT: ${{ github.event.inputs.wait_minutes || ((contains(github.event.schedule, ' 13 ') || contains(github.event.schedule, ' 14 ') || contains(github.event.schedule, ' 15 ')) && '60' || '0') }}
           DEPLOY_HOOK: ${{ secrets.DEPLOY_HOOK }}
         run: |
           git config user.name 'lotto-bot'
