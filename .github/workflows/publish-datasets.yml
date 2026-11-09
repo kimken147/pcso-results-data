@@ -30,7 +30,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install --quiet "huggingface_hub>=1.0" "pyarrow>=15" "kaggle>=1.7.4"
+      - run: pip install --quiet "huggingface_hub>=1.0" "pyarrow>=15" "kaggle>=1.7.4" six  # kaggle 2.2.x imports six without declaring it
       - name: Export tables and dataset card
         run: python pipeline/export_datasets.py --out data/export ${{ vars.KAGGLE_USERNAME && format('--kaggle-user {0}', vars.KAGGLE_USERNAME) || '' }}
       - name: Upload to Hugging Face
