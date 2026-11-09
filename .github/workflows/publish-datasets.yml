@@ -41,14 +41,13 @@ jobs:
           hf upload lottotayo/pcso-lotto-results data/export . --repo-type dataset \
             --exclude "dataset-metadata.json" \
             --commit-message "data: refresh $(date -u +%Y-%m-%d)"
-      - name: Publish to Kaggle
-        if: ${{ vars.KAGGLE_USERNAME != '' }}
+      - name: Create Kaggle dataset (first run only)
+        if: ${{ vars.KAGGLE_USERNAME != '' && inputs.kaggle_create == true }}
         env:
           KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
-        run: |
-          # Kaggle takes the folder; README.md is uploaded as a plain file, the description lives in the metadata
-          if [ "${{ inputs.kaggle_create }}" = "true" ]; then
-            kaggle datasets create -p data/export --dir-mode skip
-          else
-            kaggle datasets version -p data/export -m "Refresh $(date -u +%Y-%m-%d)" --dir-mode skip
-          fi
+        run: kaggle datasets create -p data/export --dir-mode skip
+      - name: Publish new Kaggle version
+        if: ${{ vars.KAGGLE_USERNAME != '' && inputs.kaggle_create != true }}
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+        run: kaggle datasets version -p data/export -m "Refresh $(date -u +%Y-%m-%d)" --dir-mode skip
