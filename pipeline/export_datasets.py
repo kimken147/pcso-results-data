@@ -184,7 +184,7 @@ def kaggle_metadata(user: str, generated: str) -> dict:
             f"Last refresh: {generated} UTC. Source: pcso.gov.ph; PCSO's official record prevails. Licence CC BY 4.0."
         ),
         "licenses": [{"name": "CC-BY-4.0"}],
-        "keywords": ["lottery", "philippines", "pcso", "time series", "tabular"],
+        "keywords": [],  # Kaggle only accepts tags from its own taxonomy; set them in the web UI
         "resources": [
             {"path": "draws.csv", "description": "All draws, one row per draw"},
             {"path": "draws.parquet", "description": "Same rows, typed columns"},
