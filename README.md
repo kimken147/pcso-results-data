@@ -12,3 +12,5 @@ data/results/<game>.json  → { "game", "updated_at", "source", "draws": [ { "da
 
 Pipeline: `pipeline/pcso.py` (official), `pipeline/recap.py` (early results), `pipeline/gma.py` (fallback source when pcso.gov.ph refuses the fetch).
 Results are reproduced from PCSO; in case of discrepancy PCSO's record prevails.
+
+Dataset mirrors (flat CSV/Parquet, refreshed daily by `.github/workflows/publish-datasets.yml` via `pipeline/export_datasets.py`): Hugging Face [lottotayo/pcso-lotto-results](https://huggingface.co/datasets/lottotayo/pcso-lotto-results) and Kaggle. Licence CC BY 4.0, attribution "Lotto Tayo (lottotayo.ph)".

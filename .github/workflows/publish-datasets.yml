@@ -1,0 +1,54 @@
+name: Publish datasets (Hugging Face, Kaggle)
+
+# Mirrors data/results as flat tables to the public dataset platforms. Runs after the evening
+# official refresh has landed (23:30 PHT = 15:30 UTC) and on demand. Secrets: HF_TOKEN (write token of
+# the lottotayo account), KAGGLE_API_TOKEN (Kaggle API token). Repo variable KAGGLE_USERNAME selects the
+# Kaggle dataset owner; the Kaggle step is skipped until it is set.
+on:
+  schedule:
+    - cron: "30 15 * * *"
+  workflow_dispatch:
+    inputs:
+      kaggle_create:
+        description: "First run only: create the Kaggle dataset instead of versioning it"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-datasets
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet "huggingface_hub>=1.0" "pyarrow>=15" "kaggle>=1.7.4"
+      - name: Export tables and dataset card
+        run: python pipeline/export_datasets.py --out data/export ${{ vars.KAGGLE_USERNAME && format('--kaggle-user {0}', vars.KAGGLE_USERNAME) || '' }}
+      - name: Upload to Hugging Face
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          # README.md is the dataset card; dataset-metadata.json is Kaggle-only
+          hf upload lottotayo/pcso-lotto-results data/export . --repo-type dataset \
+            --exclude "dataset-metadata.json" \
+            --commit-message "data: refresh $(date -u +%Y-%m-%d)"
+      - name: Publish to Kaggle
+        if: ${{ vars.KAGGLE_USERNAME != '' }}
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+        run: |
+          # Kaggle takes the folder; README.md is uploaded as a plain file, the description lives in the metadata
+          if [ "${{ inputs.kaggle_create }}" = "true" ]; then
+            kaggle datasets create -p data/export --dir-mode skip
+          else
+            kaggle datasets version -p data/export -m "Refresh $(date -u +%Y-%m-%d)" --dir-mode skip
+          fi
