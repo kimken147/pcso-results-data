@@ -175,7 +175,7 @@ def kaggle_metadata(user: str, generated: str) -> dict:
     return {
         "title": "PCSO Lotto Results (Philippines), updated daily",
         "id": f"{user}/pcso-lotto-results",
-        "subtitle": "Every official PCSO draw since 2024: 6/58, 6/55, 6/49, 6/45, 6/42, 6D, 4D, Swertres, EZ2, with jackpots and winners",
+        "subtitle": "Every official PCSO draw since 2024: 9 games, jackpots, winners; updated daily",
         "description": (
             "Every official draw of the Philippine Charity Sweepstakes Office (PCSO) lotto games since January 2024, "
             "including the 2PM/5PM/9PM digit-game draws, jackpot amounts and jackpot winner counts. Updated daily by an "
