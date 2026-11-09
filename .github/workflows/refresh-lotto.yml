@@ -40,7 +40,7 @@ jobs:
           deadline=$(( $(date +%s) + WAIT*60 ))
           while :; do
             python pipeline/pcso.py update --days "$DAYS" || true
-            python pipeline/recap.py reconcile || true
+            python pipeline/pending.py reconcile || true
             if ! git diff --quiet -- data; then
               git add data
               git commit -m "data: PCSO results $(date -u +%Y-%m-%dT%H:%MZ)"
