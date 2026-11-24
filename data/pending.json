@@ -1,4 +1,30 @@
 {
- "updated_at": "2026-11-23T13:42:04Z",
- "draws": []
+ "updated_at": "2026-11-24T06:15:45Z",
+ "draws": [
+  {
+   "game": "ez2",
+   "date": "2026-11-24",
+   "time": "14:00",
+   "numbers": [
+    "24",
+    "10"
+   ],
+   "source": "youtube:labas-ng-lotto",
+   "video": "8YKVfEQW4-I",
+   "fetched_at": "2026-11-24T06:15:42Z"
+  },
+  {
+   "game": "swertres",
+   "date": "2026-11-24",
+   "time": "14:00",
+   "numbers": [
+    "1",
+    "1",
+    "0"
+   ],
+   "source": "youtube:labas-ng-lotto",
+   "video": "8YKVfEQW4-I",
+   "fetched_at": "2026-11-24T06:15:45Z"
+  }
+ ]
 }
