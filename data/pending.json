@@ -1,5 +1,5 @@
 {
- "updated_at": "2026-11-27T06:21:46Z",
+ "updated_at": "2026-11-27T09:12:38Z",
  "draws": [
   {
    "game": "ez2",
@@ -25,6 +25,18 @@
    "source": "youtube:labas-ng-lotto",
    "video": "pK8N2uyBO4A",
    "fetched_at": "2026-11-27T06:21:46Z"
+  },
+  {
+   "game": "ez2",
+   "date": "2026-11-27",
+   "time": "17:00",
+   "numbers": [
+    "14",
+    "19"
+   ],
+   "source": "youtube:labas-ng-lotto",
+   "video": "0CCP6l0KCYc",
+   "fetched_at": "2026-11-27T09:12:32Z"
   }
  ]
 }
